@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Lisun.RedisInterface.Abstraction/Lisun.RedisInterface.csproj" />
+  <Project Path="Lisun.RedisInterface.Api/Lisun.RedisInterface.Api.csproj" />
+</Solution>
