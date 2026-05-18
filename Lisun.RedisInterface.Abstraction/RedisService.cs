@@ -8,10 +8,12 @@ public sealed class RedisService<CacheType> : IRedisService<CacheType>
 {
     private readonly IDistributedCache _cache;
     private readonly JsonSerializerOptions _defaultJsonOption;
+    private readonly CacheSetting _setting;
 
     public RedisService(IDistributedCache cahce)
     {
         _cache = cahce;
+        _setting = Storage.Get<CacheType>();
         _defaultJsonOption = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -67,18 +69,18 @@ public sealed class RedisService<CacheType> : IRedisService<CacheType>
         if (string.IsNullOrWhiteSpace(key))
             throw new ArgumentNullException(nameof(key));
 
-        return $"{CacheType.CacheSetting.AreaPrefix}:{key}"; 
+        return $"{_setting.AreaPrefix}:{key}"; 
     }
 
     private JsonSerializerOptions JsonOption()
-        => CacheType.CacheSetting.JsonOption ?? _defaultJsonOption;
+        => _setting.JsonOption ?? _defaultJsonOption;
 
     private DistributedCacheEntryOptions CacheEntryOption()
         =>  new DistributedCacheEntryOptions
         {
-            AbsoluteExpirationRelativeToNow = CacheType.CacheSetting.RelativeExpireTime,
-            AbsoluteExpiration = CacheType.CacheSetting.AbsoluteExpireDateTime,
-            SlidingExpiration = CacheType.CacheSetting.SlidingExpiration
+            AbsoluteExpirationRelativeToNow = _setting.RelativeExpireTime,
+            AbsoluteExpiration = _setting.AbsoluteExpireDateTime,
+            SlidingExpiration = _setting.SlidingExpiration
         };
 
     private CacheType? Deserialize(byte[]? bytes)

@@ -2,5 +2,9 @@
 
 public interface ICacheable
 {
-    public static abstract CacheSetting CacheSetting { get; }
+}
+
+public interface IConfigedCacheable : ICacheable
+{
+    static abstract CacheSetting CacheSetting { get; }
 }
