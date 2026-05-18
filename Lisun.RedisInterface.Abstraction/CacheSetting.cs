@@ -41,6 +41,8 @@ public sealed class CacheSetting
         return this;
     }
 
+    public static CacheSetting Generate(string areaPrefix = "")
+        => new CacheSetting(areaPrefix);
 
     private void ValidateExpirationConfig()
     {

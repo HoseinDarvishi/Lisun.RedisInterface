@@ -2,12 +2,12 @@
 
 namespace Lisun.RedisInterface;
 
-internal static class Storage
+public static class Storage
 {
     private static readonly Dictionary<Type, CacheSetting> _settings = new();
     public static IReadOnlyDictionary<Type, CacheSetting> Settings => _settings;
 
-    public static void Register<T>(CacheSetting setting)
+    internal static void Register<T>(CacheSetting setting)
         where T : ICacheable
     {
         var type = typeof(T);
@@ -18,7 +18,7 @@ internal static class Storage
         _settings[type] = setting;
     }
 
-    public static void Register(Type type, CacheSetting setting)
+    internal static void Register(Type type, CacheSetting setting)
     {
         if (_settings.ContainsKey(type))
             throw new InvalidOperationException($"CacheSetting for {type.Name} already registered");

@@ -1,7 +1,10 @@
-﻿namespace Lisun.RedisInterface.Abstraction;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-public class RedisInterfaceConfig
+namespace Lisun.RedisInterface.Abstraction;
+
+public class RedisInterfaceOption
 {
-    public string Configuration { get; set; } = default!;
+    public string Connection { get; set; } = default!;
     public string? InstanceName { get; set; }
+    public ServiceLifetime RedisServiceLifeTime { get; set; } = ServiceLifetime.Scoped;
 }
