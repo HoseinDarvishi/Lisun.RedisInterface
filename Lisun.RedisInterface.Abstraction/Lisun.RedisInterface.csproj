@@ -1,15 +1,53 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-  </ItemGroup>
+		<!-- Package Information -->
+		<PackageId>Lisun.RedisInterface</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>Hossein Darvishi</Authors>
+		<Company>Lisun</Company>
+
+		<Title>Lisun Redis Interface</Title>
+		<Description>
+			A lightweight and developer-friendly .NET library that simplifies working with Redis through a strongly typed, object-oriented API. Work with Redis using familiar C# types and objects while reducing boilerplate code around serialization, keys, and Redis operations.
+		</Description>
+
+		<PackageTags>redis;dotnet;csharp;dotnet10;redis-client;redis-library;strongly-typed;object-oriented;cache;generic</PackageTags>
+
+		<!-- Package Metadata -->
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+		<!-- Repository -->
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/HoseinDarvishi/Lisun.RedisInterface.git</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/HoseinDarvishi/Lisun.RedisInterface.git</PackageProjectUrl>
+
+		<!-- Package Documentation -->
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<!-- Release Information -->
+		<PackageReleaseNotes>
+			Initial release of Lisun.RedisInterface, providing a strongly typed and object-oriented abstraction for working with Redis in .NET.
+		</PackageReleaseNotes>
+
+		<!-- NuGet Package -->
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.11" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.11" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.11" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
 </Project>
