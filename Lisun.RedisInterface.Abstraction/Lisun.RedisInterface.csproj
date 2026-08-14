@@ -16,7 +16,7 @@
 			A lightweight and developer-friendly .NET library that simplifies working with Redis through a strongly typed, object-oriented API. Work with Redis using familiar C# types and objects while reducing boilerplate code around serialization, keys, and Redis operations.
 		</Description>
 
-		<PackageTags>redis;dotnet;csharp;dotnet10;redis-client;redis-library;strongly-typed;object-oriented;cache;generic</PackageTags>
+		<PackageTags>redis-interface;redis;dotnet;csharp;dotnet10;redis-client;redis-library;strongly-typed;object-oriented;cache;generic</PackageTags>
 
 		<!-- Package Metadata -->
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
