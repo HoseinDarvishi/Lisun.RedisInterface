@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Lisun.RedisInterface.Abstraction;
 
@@ -10,22 +9,27 @@ public static class RedisInterface
     /// acivating redis + redisInterface
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="config">passing 'Connection' and 'InstanceName' as lambda is required ! 'RedisServiceLifeTime' has Scoped default value</param>
+    /// <param name="configuration"></param>
+    /// <param name="option">passing as lambda, 'RedisServiceLifeTime' has Scoped default value</param>
     /// <returns>services</returns>
     public static IServiceCollection AddRedisInterface(
-        this IServiceCollection services, Action<RedisInterfaceOption> config)
+        this IServiceCollection services , Action<RedisInterfaceOption> option = null)
     {
-        var redisConfig = new RedisInterfaceOption();
-        config(redisConfig);
-        ValidateConfig(redisConfig);
+        var redisInterfaceOption = new RedisInterfaceOption();
+        if(option != null)
+            option(redisInterfaceOption);
+
+        ValidateConfig(redisInterfaceOption);
+        
         services.AddStackExchangeRedisCache(options =>
         {
-            options.Configuration = redisConfig.Connection;
-            options.InstanceName = redisConfig.InstanceName + ":";
+            options.Configuration = redisInterfaceOption.ConnectionString;
+            options.InstanceName = redisInterfaceOption.InstanceName + ":";
         });
+
         ExtractConfigedClassCacheSettings();
         services.Add(
-            ServiceDescriptor.Describe(typeof(IRedisService<>), typeof(RedisService<>), redisConfig.RedisServiceLifeTime));
+            ServiceDescriptor.Describe(typeof(IRedisService<>), typeof(RedisService<>), redisInterfaceOption.RedisServiceLifeTime));
 
         return services;
     }
@@ -84,12 +88,12 @@ public static class RedisInterface
         return name!.StartsWith("System") || name.StartsWith("Microsoft") || name.StartsWith("mscorlib") || name.StartsWith("netstandard");
     }
 
-    private static void ValidateConfig(RedisInterfaceOption conf) 
+    private static void ValidateConfig(RedisInterfaceOption opt) 
     {
-        if (string.IsNullOrWhiteSpace(conf.Connection))
-            throw new ArgumentNullException(nameof(conf.Connection), "Connection must have value !");
+        //if (string.IsNullOrWhiteSpace(conf.ConnectionString))
+        //    throw new ArgumentNullException(nameof(conf.Connection), "Connection must have value !");
 
-        if (string.IsNullOrWhiteSpace(conf.InstanceName))
-            throw new ArgumentNullException(nameof(conf.InstanceName), "InstanceName must have value !");
+        //if (string.IsNullOrWhiteSpace(conf.InstanceName))
+        //    throw new ArgumentNullException(nameof(conf.InstanceName), "InstanceName must have value !");
     }
 }
