@@ -17,7 +17,7 @@ Instead of working directly with Redis commands, keys, serialization, and low-le
 
 ## Requirements
 
-* .NET 10.0 or later
+* .NET 8.0 or later
 * Redis server
 * Microsoft.Extensions.Caching.StackExchangeRedis
 
@@ -43,9 +43,21 @@ using Lisun.RedisInterface.Abstraction;
 
 builder.Services.AddRedisInterface(option =>
 {
+    // base options
     option.InstanceName = "TestRedis";
-    option.Connection = builder.Configuration.GetConnectionString("Redis")!;
     option.RedisServiceLifeTime = ServiceLifetime.Scoped;
+
+    // single redis server
+    option.Connection = builder.Configuration.GetConnectionString("Redis")!;
+
+    // sentinel 
+    //option.UseSentinels = true;
+    //option.SentinelOption = new SentinelConfig 
+    //{
+    //    MasterName = "myMaster",
+    //    Password = "password",
+    //    Endpoints = new List<string>()
+    //}
 });
 ```
 
@@ -68,7 +80,7 @@ public class Person : ICacheable
 ```
 then in program.cs : 
 ```csharp
-RedisInterface.RegisterConfig<Refer>(CacheSetting.Generate());
+RedisInterface.RegisterConfig<Person>(CacheSetting.Generate());
 ```
 ------------
 

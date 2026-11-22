@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 using System.Reflection;
 
 namespace Lisun.RedisInterface.Abstraction;
@@ -20,12 +21,41 @@ public static class RedisInterface
             option(redisInterfaceOption);
 
         ValidateConfig(redisInterfaceOption);
-        
-        services.AddStackExchangeRedisCache(options =>
+
+        if (!redisInterfaceOption.UseSentinels)
         {
-            options.Configuration = redisInterfaceOption.ConnectionString;
-            options.InstanceName = redisInterfaceOption.InstanceName + ":";
-        });
+            // key
+
+            services.AddSingleton<IConnectionMultiplexer>(
+                ConnectionMultiplexer.Connect(redisInterfaceOption.ConnectionString)
+            );
+        }
+        else
+        {
+            var sentinelConfig = new ConfigurationOptions
+            {
+                CommandMap = CommandMap.Sentinel,
+                AbortOnConnectFail = false,
+                Password = redisInterfaceOption.SentinelOption!.Password
+            };
+            foreach (var endpoint in redisInterfaceOption.SentinelOption.Endpoints)
+            {
+                sentinelConfig.EndPoints.Add(endpoint);
+            }
+            var sentinelConnection = ConnectionMultiplexer.Connect(sentinelConfig);
+            var masterConfig = new ConfigurationOptions
+            {
+                ServiceName = redisInterfaceOption.SentinelOption.MasterName,
+                Password = redisInterfaceOption.SentinelOption.Password,
+                AbortOnConnectFail = false
+            };
+            var master = sentinelConnection
+                .GetSentinelMasterConnection(masterConfig);
+
+            services.AddSingleton<IConnectionMultiplexer>(master);
+        }
+
+        services.AddSingleton(redisInterfaceOption);
 
         ExtractConfigedClassCacheSettings();
         services.Add(
@@ -88,12 +118,24 @@ public static class RedisInterface
         return name!.StartsWith("System") || name.StartsWith("Microsoft") || name.StartsWith("mscorlib") || name.StartsWith("netstandard");
     }
 
-    private static void ValidateConfig(RedisInterfaceOption opt) 
+    private static void ValidateConfig(RedisInterfaceOption opt)
     {
-        //if (string.IsNullOrWhiteSpace(conf.ConnectionString))
-        //    throw new ArgumentNullException(nameof(conf.Connection), "Connection must have value !");
+        ArgumentNullException.ThrowIfNull(opt);
 
-        //if (string.IsNullOrWhiteSpace(conf.InstanceName))
-        //    throw new ArgumentNullException(nameof(conf.InstanceName), "InstanceName must have value !");
+        if (opt.UseSentinels)
+        {
+            ArgumentNullException.ThrowIfNull(opt.SentinelOption);
+
+            if (string.IsNullOrWhiteSpace(opt.SentinelOption.MasterName))
+                throw new ArgumentException("Sentinel MasterName is required.");
+
+            if (opt.SentinelOption.Endpoints is null ||
+                opt.SentinelOption.Endpoints.Count == 0)
+                throw new ArgumentException("At least one Sentinel endpoint is required.");
+        }
+        else if (string.IsNullOrWhiteSpace(opt.ConnectionString))
+        {
+            throw new ArgumentException("Redis ConnectionString is required.");
+        }
     }
 }

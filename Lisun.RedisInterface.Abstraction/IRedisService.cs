@@ -6,4 +6,5 @@ public interface IRedisService<CacheType> where CacheType : ICacheable
     Task<CacheType?> GetAsync(string key, CancellationToken ct = default);
     Task RemoveAsync(string key, CancellationToken ct = default);
     Task<bool> ExistsAsync(string key,CancellationToken ct = default);
+    Task<CacheType> GetOrSetAsync(string key,Func<CancellationToken, Task<CacheType>> factory,CancellationToken ct = default);
 }

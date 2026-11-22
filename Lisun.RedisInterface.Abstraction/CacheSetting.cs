@@ -6,26 +6,17 @@ public sealed class CacheSetting
 {
     public CacheSetting(string areaPrefix)
     {
-        AreaPrefix = areaPrefix;
+        AreaPrefix = areaPrefix ?? string.Empty;
     }
 
     public string AreaPrefix { get; private set; }
     public TimeSpan? RelativeExpireTime { get; private set; }
-    public DateTimeOffset? AbsoluteExpireDateTime { get; private set; }
     public TimeSpan? SlidingExpiration { get; private set; }
     public JsonSerializerOptions? JsonOption { get; private set; }
 
     public CacheSetting ExpireAfter(TimeSpan timeSpan)
     {
         RelativeExpireTime = timeSpan;
-        ValidateExpirationConfig();
-        return this;
-    }
-
-    public CacheSetting ExpireAt(DateTimeOffset dateTimeOffset)
-    {
-        AbsoluteExpireDateTime = dateTimeOffset;
-        ValidateExpirationConfig();
         return this;
     }
 
@@ -44,9 +35,4 @@ public sealed class CacheSetting
     public static CacheSetting Generate(string areaPrefix = "")
         => new CacheSetting(areaPrefix);
 
-    private void ValidateExpirationConfig()
-    {
-        if (RelativeExpireTime.HasValue && AbsoluteExpireDateTime.HasValue)
-            throw new InvalidOperationException("RelativeExpireTime and AbsoluteExpireDateTime could not has value together");
-    }
 }
